@@ -56,6 +56,9 @@ Route::get('/quotes/author/{author}', [QuotesController::class, 'filterByAuthor'
 //create your route for products
 Route::get('/products', [ProductsController::class, 'index']);
 
+// Route for the users index page
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);

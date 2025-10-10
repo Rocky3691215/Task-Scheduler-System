@@ -6,6 +6,7 @@ use App\Http\Controllers\SignUpsController;
 use App\Http\Controllers\QuotesController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ use App\Http\Controllers\UsersController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 //return a string 
 Route::get('/page1', function () {
@@ -55,5 +56,17 @@ Route::get('/quotes/author/{author}', [QuotesController::class, 'filterByAuthor'
 //create your route for products
 Route::get('/products', [ProductsController::class, 'index']);
 
-// Add this new route for your admin dashboard
-Route::get('/users', [UsersController::class, 'index']);
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/sign-up', [SignUpsController::class, 'index']);
+    Route::post('/sign-up', [SignUpsController::class, 'store']);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/home', function () {
+        return view('home');
+    })->name('home');
+
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});

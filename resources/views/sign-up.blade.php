@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sign Up</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -22,7 +22,8 @@
             background-color: #ffffff;
             padding: 2.5rem;
             border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
             width: 100%;
             max-width: 400px;
         }
@@ -43,9 +44,9 @@
             color: #374151;
             margin-bottom: 0.5rem;
         }
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
+        input[type='text'],
+        input[type='email'],
+        input[type='password'] {
             width: 100%;
             padding: 0.75rem;
             font-size: 1rem;
@@ -86,28 +87,61 @@
             text-decoration: none;
             font-weight: 600;
         }
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
     </style>
 </head>
 <body>
     <div class="signup-container">
         <h1>Sign Up</h1>
-        <form>
+        <form method="POST" action="/sign-up">
+            @csrf
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" required />
+                @error('first_name')
+                <p class="error-message">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" required />
+                @error('last_name')
+                <p class="error-message">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" value="{{ old('username') }}" required />
+                @error('username')
+                <p class="error-message">{{ $message }}</p>
+                @enderror
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required />
+                @error('email')
+                <p class="error-message">{{ $message }}</p>
+                @enderror
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required />
+                @error('password')
+                <p class="error-message">{{ $message }}</p>
+                @enderror
             </div>
-            <button type="submit">Create Account</button>
+            <div class="form-group">
+                <label for="password_confirmation">Confirm Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required />
+            </div>
+            <button type="submit">Sign Up</button>
         </form>
         <div class="login-link">
-            Already have an account? <a href="#">Log in here</a>
+            Already have an account? <a href="/login">Log in here</a>
         </div>
     </div>
 </body>

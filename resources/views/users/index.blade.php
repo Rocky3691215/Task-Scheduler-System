@@ -5,9 +5,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Users</title>
-<link rel="preconnect" href="https://www.google.com/search?q=https://fonts.googleapis.com">
-<link rel="preconnect" href="https://www.google.com/search?q=https://fonts.gstatic.com" crossorigin>
-<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DInter:wght%40400%3B600%26display%3Dswap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body {
 font-family: 'Inter', sans-serif;
@@ -80,7 +81,7 @@ color: #4338ca;
 @foreach ($users as $user)
 <tr>
 <td>{{ $user->id }}</td>
-<td>{{ $user->name }}</td>
+<td>{{ $user->first_name }} {{ $user->last_name }}</td>
 <td>{{ $user->email }}</td>
 <td>
 <a href="{{ route('users.show', $user->id) }}" class="action-link">View</a>

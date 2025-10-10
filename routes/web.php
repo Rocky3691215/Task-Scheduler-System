@@ -58,6 +58,7 @@ Route::get('/products', [ProductsController::class, 'index']);
 
 // Route for the users index page
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::resource('users', UsersController::class);
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

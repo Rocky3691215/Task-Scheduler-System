@@ -7,6 +7,7 @@ use App\Http\Controllers\QuotesController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\TasksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,40 +23,31 @@ use App\Http\Controllers\LoginController;
 Route::get('/', function () {
     return view('landing');
 });
-//return a string 
+
+// Basic route examples
 Route::get('/page1', function () {
     return 'Hello World';
 });
-//return a variable
+
 Route::get('/page2', function () {
     $message = 'Hello Again';
     return $message;
 });
-//return an array
+
 Route::get('/page3', function () {
     $arr = [1,2,3];
     return $arr;
 });
-//return a view
-Route::get('/page4', [PagesController::class, 'page4']);
 
-//return a view inside a folder
+Route::get('/page4', [PagesController::class, 'page4']);
 Route::get('/page5', [PagesController::class, 'page5']);
 
-//Pass data from view to controller and vice versa
-Route::get('/sign-up', [SignUpsController::class, 'index']);
-
-//Foreach Loops in blade
+// Public routes
 Route::get('/quotes', [QuotesController::class, 'index']);
-
-//how to take care of a route that keeps changing
-//use wildcards {}- for parts of route that isn't static
-
 Route::get('/quotes/author/{author}', [QuotesController::class, 'filterByAuthor']);
-
-//create your route for products
 Route::get('/products', [ProductsController::class, 'index']);
 
+// Guest routes (for non-authenticated users)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
@@ -63,10 +55,41 @@ Route::middleware('guest')->group(function () {
     Route::post('/sign-up', [SignUpsController::class, 'store']);
 });
 
+// Protected routes (require authentication)
 Route::middleware('auth')->group(function () {
     Route::get('/home', function () {
         return view('home');
     })->name('home');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Users Management Routes
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UsersController::class, 'index'])->name('users.index');
+        Route::get('/create', [UsersController::class, 'create'])->name('users.create');
+        Route::post('/', [UsersController::class, 'store'])->name('users.store');
+        Route::get('/{user}', [UsersController::class, 'show'])->name('users.show');
+        Route::get('/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
+        Route::put('/{user}', [UsersController::class, 'update'])->name('users.update');
+        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
+    });
+
+    // Tasks Management Routes
+    Route::prefix('tasks')->group(function () {
+        Route::get('/', [TasksController::class, 'index'])->name('tasks.index');
+        Route::get('/create', [TasksController::class, 'create'])->name('tasks.create');
+        Route::post('/', [TasksController::class, 'store'])->name('tasks.store');
+        Route::get('/{task}', [TasksController::class, 'show'])->name('tasks.show');
+        Route::get('/{task}/edit', [TasksController::class, 'edit'])->name('tasks.edit');
+        Route::put('/{task}', [TasksController::class, 'update'])->name('tasks.update');
+        Route::delete('/{task}', [TasksController::class, 'destroy'])->name('tasks.destroy');
+        
+        // Additional task-specific routes
+        Route::patch('/{task}/complete', [TasksController::class, 'complete'])->name('tasks.complete');
+        Route::patch('/{task}/incomplete', [TasksController::class, 'incomplete'])->name('tasks.incomplete');
+    });
+
+    // Alternative: You can also use resource routes (more concise)
+    // Route::resource('users', UsersController::class);
+    // Route::resource('tasks', TasksController::class);
 });

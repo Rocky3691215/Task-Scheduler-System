@@ -7,6 +7,7 @@ use App\Http\Controllers\QuotesController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\TasksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,4 +70,7 @@ Route::middleware('auth')->group(function () {
     })->name('home');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Tasks Routes
+    Route::resource('tasks', TasksController::class);
 });

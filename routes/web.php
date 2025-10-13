@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminTableController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\SignUpsController;
@@ -69,4 +71,10 @@ Route::middleware('auth')->group(function () {
     })->name('home');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Route for Admin Table
+Route::get('/admin', [AdminTableController::class, 'index'])->name('admin.index');
+Route::get('/admin/create', [AdminTableController::class, 'create'])->name('admin.create');
+Route::post('/admin', [AdminTableController::class, 'store'])->name('admin.store');
+
 });

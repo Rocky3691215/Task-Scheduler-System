@@ -15,5 +15,6 @@
         <h5>{{ $user->first_name }}</h5>
         <h5>{{ $user->last_name }}</h5>
         <h5>{{ $user->username }}</h5>
+        <h5>{{ $user->email }}</h5>
     </div>
 @endsection

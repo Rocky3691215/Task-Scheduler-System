@@ -15,13 +15,13 @@
         body {
             font-family: Figtree, sans-serif;
             margin: 0;
-            line-height: 1;
+            line-height: 1.6;
             background-color: #f3f4f6;
         }
         header {
             position: fixed;
             top: 0;
-            width: 1320px;
+            width: 100%;
             background-color: #4f46e5;
             color: white;
             padding: 1rem;
@@ -31,11 +31,56 @@
             z-index: 1000;
         }
         main {
-            padding-top: 60px; /* To offset fixed header */
+            padding-top: 80px; /* To offset fixed header */
             max-width: 1200px;
             margin: 0 auto;
             padding-left: 1rem;
             padding-right: 1rem;
+        }
+        .page-title {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        .add-button-container {
+            margin-bottom: 1.5rem;
+        }
+        .add {
+            display: inline-block;
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .add:hover {
+            background-color: #4338ca;
+            text-decoration: none;
+        }
+        .table {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        tr:last-child td {
+            border-bottom: none;
         }
         footer {
             position: fixed;
@@ -46,29 +91,30 @@
             padding: 0.5rem 0;
             background-color: #4f46e5;
             color: white;
-            margin-top: 0;
+            margin-top: 2rem;
         }
-        a {
+        nav a {
             color: white;
             text-decoration: none;
             font-weight: 600;
+            margin: 0 0.5rem;
         }
-        a:hover {
+        nav a:hover {
             text-decoration: underline;
         }
     </style>
     @stack('styles')
 </head>
 <body>
-    @if (Request::is('/') || Request::is('home'))
     <header>
-        <h1>Task Scheduler</h1>
+        <h1>@yield('title', 'Task Scheduler')</h1>
         <nav>
-            <a href="{{ url('/') }}">Home</a> |
+            <a href="{{ url('/') }}">Home</a>
             @guest
-                <a href="{{ route('login') }}">Login</a> |
+                <a href="{{ route('login') }}">Login</a>
                 <a href="{{ url('/sign-up') }}">Sign Up</a>
             @else
+                <a href="{{ route('users.index') }}">Users</a>
                 <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                     @csrf
                     <button type="submit" style="background:none;border:none;color:white;cursor:pointer;font-weight:600;">Logout</button>
@@ -76,10 +122,20 @@
             @endguest
         </nav>
     </header>
-    @endif
 
     <main>
-        @yield('content')
+        @hasSection('content')
+            {{-- Render legacy full-content sections when present (keeps backward compatibility) --}}
+            @yield('content')
+        @else
+            <h2 class="page-title">@yield('page')</h2>
+            
+            <div class="add-button-container">
+                @yield('addbtn')
+            </div>
+
+            @yield('table')
+        @endif
     </main>
 
     <footer>

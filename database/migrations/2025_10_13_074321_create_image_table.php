@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('file_name'); // original file name
             $table->string('file_path'); // storage path
-            $table->string('file_type')->nullable(); // optional: jpg, png, etc.
             $table->unsignedBigInteger('file_size')->nullable(); // optional: file size in bytes
+            $table->date('upload_date')->nullable(); // upload date
+            $table->unsignedBigInteger('task_id')->nullable(); // foreign key to tasks table
+            $table->foreign('task_id')->references('id')->on('tasks');
             $table->morphs('attachable'); // for polymorphic relation (can attach to any model)
             $table->timestamps();
         });

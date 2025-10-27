@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id('syncId');
             $table->dateTime('lastSyncTime')->nullable();
             $table->string('deviceId');
-            $table->foreignId('userId')->constrained('users');
+            $table->foreignId('userId')->constrained('users')->onDelete('cascade');
             $table->unique(['userId', 'deviceId']);
             $table->timestamps();
         });
+
     }
 
     /**

@@ -15,16 +15,42 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->insert([
-            'first_name' => 'Admin',
-            'last_name' => 'User',
-            'username' => 'admin',
-            'email' => 'admin@example.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-            'remember_token' => Str::random(10),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $users = [
+            [
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'username' => 'admin',
+                'email' => 'admin@example.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'first_name' => 'Test',
+                'last_name' => 'User 2',
+                'username' => 'testuser2',
+                'email' => 'test2@example.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'first_name' => 'Test',
+                'last_name' => 'User 3',
+                'username' => 'testuser3',
+                'email' => 'test3@example.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
+
+        DB::table('users')->insert($users);
     }
 }

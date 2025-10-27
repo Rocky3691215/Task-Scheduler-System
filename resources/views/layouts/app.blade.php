@@ -21,7 +21,7 @@
         header {
             position: fixed;
             top: 0;
-            width: 1320px;
+            width: 100%;
             background-color: #4f46e5;
             color: white;
             padding: 1rem;
@@ -31,11 +31,12 @@
             z-index: 1000;
         }
         main {
-            padding-top: 60px; /* To offset fixed header */
+            padding-top: 80px; /* To offset fixed header */
             max-width: 1200px;
             margin: 0 auto;
             padding-left: 1rem;
             padding-right: 1rem;
+            min-height: calc(100vh - 120px);
         }
         footer {
             position: fixed;
@@ -56,27 +57,43 @@
         a:hover {
             text-decoration: underline;
         }
+        nav {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+        }
     </style>
     @stack('styles')
 </head>
 <body>
-    @if (Request::is('/') || Request::is('home'))
     <header>
-        <h1>Task Scheduler</h1>
-        <nav>
-            <a href="{{ url('/') }}">Home</a> |
-            @guest
-                <a href="{{ route('login') }}">Login</a> |
-                <a href="{{ url('/sign-up') }}">Sign Up</a>
-            @else
-                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
-                    @csrf
-                    <button type="submit" style="background:none;border:none;color:white;cursor:pointer;font-weight:600;">Logout</button>
-                </form>
-            @endguest
-        </nav>
+        <div class="header-content">
+            <h1>Task Scheduler</h1>
+            <nav>
+                <a href="{{ url('/') }}">Home</a> |
+                @guest
+                    <a href="{{ route('login') }}">Login</a> |
+                    <a href="{{ url('/sign-up') }}">Sign Up</a>
+                @else
+                    <a href="{{ route('tasks.index') }}">All Tasks</a> |
+                    <a href="{{ route('tasks.create') }}">Create New Task</a> |
+                    <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                        @csrf
+                        <button type="submit" style="background:none;border:none;color:white;cursor:pointer;font-weight:600;">Logout</button>
+                    </form>
+                @endguest
+            </nav>
+        </div>
     </header>
-    @endif
 
     <main>
         @yield('content')

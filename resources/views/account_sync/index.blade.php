@@ -2,45 +2,13 @@
 
 @section('title', 'Account Sync Status')
 
+
+
 @push('navbar-override')
 <style>
-    .main-header .nav-center nav {
+    /* Hide Account Sync button on its own page */
+    a.nav-link[href="{{ url('/account_sync') }}"] {
         display: none !important;
-    }
-
-    .main-header .auth-section .nav-link {
-        display: none !important;
-    }
-
-    .main-header .auth-section .btn-primary {
-        display: none !important;
-    }
-
-    .main-header .auth-section form {
-        display: inline-block !important;
-    }
-
-    .main-header .auth-section .btn-logout {
-        display: inline-block !important;
-        background: rgba(220, 38, 38, 0.2) !important;
-        border: 1px solid rgba(220, 38, 38, 0.3) !important;
-        color: white !important;
-        padding: 0.5rem 1rem !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        font-size: 0.9rem !important;
-        text-decoration: none !important;
-    }
-
-    .main-header .auth-section .btn-logout:hover {
-        background: rgba(220, 38, 38, 0.3) !important;
-        transform: translateY(-1px) !important;
-    }
-
-    main {
-        padding-top: 3rem !important;
     }
 </style>
 @endpush
@@ -59,7 +27,6 @@ body {
 }
 
 main {
-    padding-top: 0 !important;
     min-height: calc(100vh - 140px) !important;
 }
 

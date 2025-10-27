@@ -3,46 +3,34 @@
 @section('title', 'Create Account Sync')
 
 @push('navbar-override')
-<style>
-    .main-header .auth-section .nav-link[href="{{ url('/') }}"] { /* Targeting the Home link */
-        display: none !important;
-    }
-
-    .main-header .auth-section .btn-logout {
-        display: none !important;
-    }
-
-    /* More specific targeting for the Account Sync link */
-    a.nav-link[href="{{ url('/account_sync') }}"] {
-        display: none !important;
-    }
-
-    .centered-message {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 80vh;
-        flex-direction: column;
-    }
-
-    .return-button-container {
-        position: absolute;
-        top: 15px; /* Adjust as needed */
-        right: 15px; /* Adjust as needed */
-        z-index: 1000; /* Ensure it's above other elements */
-    }
-</style>
+    <style>
+        /* Hide the Home link in the auth-section */
+        .main-header .auth-section a.nav-link[href="{{ url('/') }}"] {
+            display: none !important;
+        }
+        /* Hide the Account Sync link in the auth-section */
+        .main-header .auth-section a.nav-link[href="{{ url('/account_sync') }}"] {
+            display: none !important;
+        }
+        /* Hide the Logout button in the auth-section */
+        .main-header .auth-section .btn-logout {
+            display: none !important;
+        }
+        /* Hide the nav-center section completely */
+        .main-header .nav-center {
+            display: none !important;
+        }
+    </style>
+    <div class="auth-section" style="display: flex !important; margin-left: auto;">
+        <a href="{{ route('account_sync.index') }}" class="btn-primary">Return</a>
+    </div>
 @endpush
 
 @section('content')
-<div class="centered-message">
-    <div class="alert alert-info text-center" role="alert">
-        <h2>Feature Not Yet Implemented</h2>
-        <p>We are still working on this feature. Please check back later!</p>
-        <a href="{{ route('account_sync.index') }}" class="btn btn-primary">Back to Account Sync List</a>
+    <div class="centered-message">
+        <div class="alert alert-info text-center" role="alert">
+            <h2>Feature Not Yet Implemented</h2>
+            <p>We are still working on this feature. Please check back later!</p>
+        </div>
     </div>
-</div>
-<div class="return-button-container">
-    <a href="{{ route('account_sync.index') }}" class="btn btn-primary">Return</a>
-</div>
 @endsection

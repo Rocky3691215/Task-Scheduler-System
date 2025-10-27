@@ -65,6 +65,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/home', function () {
+        return view('home');
+    })->name('home');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // Account Sync routes

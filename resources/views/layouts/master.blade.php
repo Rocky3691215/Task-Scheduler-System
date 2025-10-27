@@ -171,6 +171,43 @@
             min-height: calc(100vh - 70px);
         }
 
+        .centered-main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .centered-message {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-20px);
+            opacity: 0;
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .centered-message h2 {
+            font-size: 2.2rem;
+            color: #334155;
+            margin-bottom: 1rem;
+        }
+
+        .centered-message p {
+            font-size: 1.1rem;
+            color: #64748b;
+            line-height: 1.8;
+        }
+
         /* Professional Footer */
         .main-footer {
             background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
@@ -248,32 +285,33 @@
             <div class="nav-center">
                 <nav>
                     <ul class="nav-menu">
-                        @auth
-                            <li class="nav-item">
-                                <a href="{{ url('/account_sync') }}" class="nav-link {{ Request::is('account_sync*') ? 'active' : '' }}">Account Sync</a>
-                            </li>
-                        @endauth
                     </ul>
                 </nav>
             </div>
 
             <div class="auth-section">
-                <a href="{{ url('/') }}" class="nav-link no-underline {{ Request::is('/') ? 'active' : '' }}">Home</a>
-                @guest
-                    <a href="{{ route('login') }}" class="btn-primary">Login</a>
-                    <a href="{{ url('/sign-up') }}" class="btn-primary">Sign Up</a>
+                @if (Request::routeIs('account_sync.create'))
+                    <a href="{{ route('account_sync.index') }}" class="btn-primary">Return</a>
                 @else
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="btn-logout">Logout</button>
-                    </form>
-                @endguest
+                    @auth
+                        <a href="{{ url('/home') }}" class="nav-link no-underline {{ Request::is('home*') ? 'active' : '' }}">Home</a>
+                        <a href="{{ url('/account_sync') }}" class="nav-link no-underline {{ Request::is('account_sync*') ? 'active' : '' }}">Account Sync</a>
+                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn-logout">Logout</button>
+                        </form>
+                    @else
+                        <a href="{{ url('/') }}" class="btn-primary">Home</a>
+                        <a href="{{ route('login') }}" class="btn-primary">Login</a>
+                        <a href="{{ url('/sign-up') }}" class="btn-primary">Sign Up</a>
+                    @endauth
+                @endif
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main class="@if (Request::routeIs('account_sync.create')) centered-main @endif">
         @yield('content')
     </main>
 

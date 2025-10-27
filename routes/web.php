@@ -10,7 +10,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AccountSyncController;
 
 /*
-|--------------------------------------------------------------------------
+Route::get('/account_sync/{accountSync}', 'AccountSyncController@show');
 | Web Routes
 |--------------------------------------------------------------------------
 |
@@ -23,7 +23,7 @@ use App\Http\Controllers\AccountSyncController;
 Route::get('/', function () {
     return view('landing');
 });
-//return a string 
+//return a string
 Route::get('/page1', function () {
     return 'Hello World';
 });
@@ -65,11 +65,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/home', function () {
-        return view('home');
-    })->name('home');
-
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Account Sync routes
     Route::resource('account_sync', AccountSyncController::class);
-    Route::resource('account_sync', AccountSyncController::class);
+    Route::post('/account_sync/{accountSync}/sync-now', [AccountSyncController::class, 'syncNow'])->name('account_sync.sync-now');
 });

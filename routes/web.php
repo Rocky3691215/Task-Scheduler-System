@@ -20,43 +20,32 @@ use App\Http\Controllers\TasksController;
 |
 */
 
-Route::get('/', function () {
-    return view('landing');
-});
-//return a string 
+// Public routes (no login required)
+Route::get('/', [TasksController::class, 'index']); // Tasks as homepage
+Route::resource('tasks', TasksController::class); // All task routes accessible without login
+
+// Example pages routes
 Route::get('/page1', function () {
     return 'Hello World';
 });
-//return a variable
+
 Route::get('/page2', function () {
     $message = 'Hello Again';
     return $message;
 });
-//return an array
+
 Route::get('/page3', function () {
     $arr = [1,2,3];
     return $arr;
 });
-//return a view
+
 Route::get('/page4', [PagesController::class, 'page4']);
-
-//return a view inside a folder
 Route::get('/page5', [PagesController::class, 'page5']);
-
-//Pass data from view to controller and vice versa
-Route::get('/sign-up', [SignUpsController::class, 'index']);
-
-//Foreach Loops in blade
 Route::get('/quotes', [QuotesController::class, 'index']);
-
-//how to take care of a route that keeps changing
-//use wildcards {}- for parts of route that isn't static
-
 Route::get('/quotes/author/{author}', [QuotesController::class, 'filterByAuthor']);
-
-//create your route for products
 Route::get('/products', [ProductsController::class, 'index']);
 
+// Authentication routes for guests only
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
@@ -64,13 +53,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/sign-up', [SignUpsController::class, 'store']);
 });
 
+// Protected routes (login required) - Only non-task routes here
 Route::middleware('auth')->group(function () {
     Route::get('/home', function () {
         return view('home');
     })->name('home');
-
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-    // Tasks Routes
-    Route::resource('tasks', TasksController::class);
 });

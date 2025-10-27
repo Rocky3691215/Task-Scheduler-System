@@ -15,12 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->boolean('completed')->default(false);
-            $table->timestamp('due_date')->nullable();
-            
-            // Foreign key to users table
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            
+            $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
+            $table->integer('priority')->default(1); // 1=Low, 2=Medium, 3=High
+            $table->dateTime('due_date')->nullable();
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
     }

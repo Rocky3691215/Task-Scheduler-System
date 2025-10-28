@@ -7,8 +7,8 @@ use App\Http\Controllers\QuotesController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImageAttachmentController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -64,13 +64,23 @@ Route::middleware('guest')->group(function () {
     Route::post('/sign-up', [SignUpsController::class, 'store']);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (){
     Route::get('/home', function () {
         return view('home');
     })->name('home');
-
+});
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // create your route for image attachments
-Route::get('/image_attachments', [ImageAttachmentController::class, 'index']);
+// Route::get('/image_attachments', ImageController'@index');
+ 
+// Route::get('/image_attachments/{id}',ImageAttachmentsController'@show');
+
+// Public routes (accessible without login)
+Route::get('/image_attachments/{id}', [ImageAttachmentController::class, 'show'])->name('image_attachments.show');
+Route::get('/image_attachments', [ImageAttachmentController::class, 'index'])->name('image_attachments.index');
+
+// Protected routes (require authentication)
+Route::middleware(['auth'])->group(function () {
+    Route::resource('image_attachments', ImageAttachmentController::class)->except(['index', 'show']);
 });

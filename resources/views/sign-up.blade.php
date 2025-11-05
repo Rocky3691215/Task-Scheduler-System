@@ -100,45 +100,45 @@
         <form method="POST" action="/sign-up">
             @csrf
             <div class="form-group">
-                <label for="first_name">First Name</label>
-                <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" required />
+                <label class="form-label" for="first_name">First Name</label>
+                <input class="form-input" type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" required />
                 @error('first_name')
-                <p class="error-message">{{ $message }}</p>
+                <div class="form-error">{{ $message }}</div>
                 @enderror
             </div>
             <div class="form-group">
-                <label for="last_name">Last Name</label>
-                <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" required />
+                <label class="form-label" for="last_name">Last Name</label>
+                <input class="form-input" type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" required />
                 @error('last_name')
-                <p class="error-message">{{ $message }}</p>
+                <div class="form-error">{{ $message }}</div>
                 @enderror
             </div>
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="{{ old('username') }}" required />
+                <label class="form-label" for="username">Username</label>
+                <input class="form-input" type="text" id="username" name="username" value="{{ old('username') }}" required />
                 @error('username')
-                <p class="error-message">{{ $message }}</p>
+                <div class="form-error">{{ $message }}</div>
                 @enderror
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required />
+                <label class="form-label" for="email">Email</label>
+                <input class="form-input" type="email" id="email" name="email" value="{{ old('email') }}" required />
                 @error('email')
-                <p class="error-message">{{ $message }}</p>
+                <div class="form-error">{{ $message }}</div>
                 @enderror
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required />
+                <label class="form-label" for="password">Password</label>
+                <input class="form-input" type="password" id="password" name="password" required />
                 @error('password')
-                <p class="error-message">{{ $message }}</p>
+                <div class="form-error">{{ $message }}</div>
                 @enderror
             </div>
             <div class="form-group">
-                <label for="password_confirmation">Confirm Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" required />
+                <label class="form-label" for="password_confirmation">Confirm Password</label>
+                <input class="form-input" type="password" id="password_confirmation" name="password_confirmation" required />
             </div>
-            <button type="submit">Sign Up</button>
+            <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
         </form>
         <div class="login-link">
             Already have an account? <a href="/login">Log in here</a>

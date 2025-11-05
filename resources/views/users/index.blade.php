@@ -10,7 +10,7 @@
 
 @section('addbtn')
     <div>
-        <a class="add" href="/users/create">Add a User</a>
+        <a class="add" href="">Add a User</a>
     </div>
 @endsection
 
@@ -23,6 +23,7 @@
                     <th>Last Name</th>
                     <th>Contact Number</th>
                     <th>Email</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +35,16 @@
                         <td>{{ $user->last_name }}</td>
                         <td>{{ $user->contact_number }}</td>
                         <td>{{ $user->email }}</td>
+                        <td>
+                            {{-- Show delete button only if the current user is authorized to delete this user --}}
+                            @can('delete', $user)
+                                <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this user?')">Delete</button>
+                                </form>
+                            @endcan
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

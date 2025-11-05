@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         // This will call all of your seeder files.
         $this->call([
             UserSeeder::class,
+            AdminUserSeeder::class,
         //     TasksSeeder::class,
         //     ProductsTableSeeder::class,
         //     QuotesTableSeeder::class,

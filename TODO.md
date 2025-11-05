@@ -1,0 +1,5 @@
+- [x] Add route for /home to show tasks page
+- [x] Update navigation link for Tasks to point to /home
+- [x] Prevent admin self-deletion in UI and controller
+- [x] Fix admin delete user to stay on admin page and prevent self-deletion
+- [ ] Test navigation to tasks page

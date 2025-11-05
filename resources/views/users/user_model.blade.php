@@ -11,10 +11,17 @@
 
 
 @section('table')
-    <div class="table">
-        <h5>{{ $user->first_name }}</h5>
-        <h5>{{ $user->last_name }}</h5>
-        <h5>{{ $user->username }}</h5>
-        <h5>{{ $user->email }}</h5>
-    </div>
+    <form class="edit-form">
+        <label for="first_name">First Name :</label>
+        <input type="text" name="first_name" value="{{ $user->first_name}}" readonly><br>
+
+        <label for="last_name">Last Name :</label>
+        <input type="text" name="last_name" value="{{ $user->last_name}}" readonly><br>
+
+        <label for="username">Username :</label>
+        <input type="text" name="username" value="{{ $user->username}}" readonly><br>
+
+        <label for="email">Email :</label>
+        <input type="text" name="email" value="{{ $user->email}}" readonly><br>
+    </form>
 @endsection

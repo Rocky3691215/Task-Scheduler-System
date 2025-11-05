@@ -23,6 +23,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,4 +45,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function isAdmin()
+    {
+        return strtolower($this->role ?? '') === 'admin';
+    }
+
+    public function isUser()
+    {
+        return strtolower($this->role ?? '') === 'user';
+    }
+
+    public function canManageUser(User $user)
+    {
+        return $this->isAdmin() || $this->id === $user->id;
+    }
 }

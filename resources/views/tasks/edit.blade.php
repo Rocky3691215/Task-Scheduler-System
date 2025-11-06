@@ -1,25 +1,26 @@
 @extends('layouts.master')
 
-@section('title', 'Create New Task - Task Scheduler')
+@section('title', 'Edit Task - Task Scheduler')
 
 @section('content')
-<div class="create-task-container">
+<div class="edit-task-container">
     <div class="row justify-content-center">
         <div class="col-12 col-md-10 col-lg-8 col-xl-6">
             <!-- Header Section -->
             <div class="text-center mb-5">
                 <div class="header-icon">
-                    <i class="fas fa-plus-circle"></i>
+                    <i class="fas fa-edit"></i>
                 </div>
-                <h1 class="page-title">Create New Task</h1>
-                <p class="page-subtitle">Fill in the details below to create a new task for your team</p>
+                <h1 class="page-title">Edit Task</h1>
+                <p class="page-subtitle">Update the task details below</p>
             </div>
 
             <!-- Form Card -->
             <div class="card task-form-card">
                 <div class="card-body">
-                    <form action="{{ route('tasks.store') }}" method="POST" class="needs-validation" novalidate>
+                    <form action="{{ route('tasks.update', $task->id) }}" method="POST" class="needs-validation" novalidate>
                         @csrf
+                        @method('PUT')
                         
                         <!-- Basic Information Section -->
                         <div class="form-section mb-5">
@@ -35,7 +36,7 @@
                                     Task Title <span class="required-star">*</span>
                                 </label>
                                 <input type="text" class="form-control form-control-lg @error('title') is-invalid @enderror" 
-                                       id="title" name="title" value="{{ old('title') }}" 
+                                       id="title" name="title" value="{{ old('title', $task->title) }}" 
                                        placeholder="Enter a clear and descriptive task title" required>
                                 @error('title')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -50,7 +51,7 @@
                                 </label>
                                 <textarea class="form-control @error('description') is-invalid @enderror" 
                                           id="description" name="description" rows="4"
-                                          placeholder="Provide detailed information about this task...">{{ old('description') }}</textarea>
+                                          placeholder="Provide detailed information about this task...">{{ old('description', $task->description) }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
@@ -74,9 +75,9 @@
                                         </label>
                                         <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
                                             <option value="">Select task status</option>
-                                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
-                                            <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>🔄 In Progress</option>
-                                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>✅ Completed</option>
+                                            <option value="pending" {{ old('status', $task->status) == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
+                                            <option value="in_progress" {{ old('status', $task->status) == 'in_progress' ? 'selected' : '' }}>🔄 In Progress</option>
+                                            <option value="completed" {{ old('status', $task->status) == 'completed' ? 'selected' : '' }}>✅ Completed</option>
                                         </select>
                                         @error('status')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -93,9 +94,9 @@
                                         </label>
                                         <select class="form-select @error('priority') is-invalid @enderror" id="priority" name="priority" required>
                                             <option value="">Select priority level</option>
-                                            <option value="1" {{ old('priority') == '1' ? 'selected' : '' }}>🟢 Low Priority</option>
-                                            <option value="2" {{ old('priority') == '2' ? 'selected' : '' }}>🟡 Medium Priority</option>
-                                            <option value="3" {{ old('priority') == '3' ? 'selected' : '' }}>🔴 High Priority</option>
+                                            <option value="1" {{ old('priority', $task->priority) == '1' ? 'selected' : '' }}>🟢 Low Priority</option>
+                                            <option value="2" {{ old('priority', $task->priority) == '2' ? 'selected' : '' }}>🟡 Medium Priority</option>
+                                            <option value="3" {{ old('priority', $task->priority) == '3' ? 'selected' : '' }}>🔴 High Priority</option>
                                         </select>
                                         @error('priority')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -111,7 +112,7 @@
                                             Due Date
                                         </label>
                                         <input type="date" class="form-control @error('due_date') is-invalid @enderror" 
-                                               id="due_date" name="due_date" value="{{ old('due_date') }}"
+                                               id="due_date" name="due_date" value="{{ old('due_date', $task->due_date ? $task->due_date->format('Y-m-d') : '') }}"
                                                min="{{ date('Y-m-d') }}">
                                         @error('due_date')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -129,7 +130,7 @@
                                         <select class="form-select @error('assigned_to') is-invalid @enderror" id="assigned_to" name="assigned_to">
                                             <option value="">Select team member</option>
                                             @foreach($users as $user)
-                                                <option value="{{ $user->id }}" {{ old('assigned_to') == $user->id ? 'selected' : '' }}>
+                                                <option value="{{ $user->id }}" {{ old('assigned_to', $task->assigned_to) == $user->id ? 'selected' : '' }}>
                                                     👤 {{ $user->name }}
                                                 </option>
                                             @endforeach
@@ -149,9 +150,9 @@
                                     <i class="fas fa-arrow-left me-2"></i>
                                     Back to Tasks
                                 </a>
-                                <button type="submit" class="btn btn-create">
-                                    <i class="fas fa-plus-circle me-2"></i>
-                                    Create Task
+                                <button type="submit" class="btn btn-update">
+                                    <i class="fas fa-save me-2"></i>
+                                    Update Task
                                 </button>
                             </div>
                         </div>
@@ -166,7 +167,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-    .create-task-container {
+    .edit-task-container {
         width: 100%;
         min-height: calc(100vh - 140px);
         display: flex;
@@ -321,15 +322,15 @@
         min-width: 160px;
     }
 
-    .btn-create {
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    .btn-update {
+        background: linear-gradient(135deg, #10b981, #34d399);
         color: white;
         border: none;
     }
 
-    .btn-create:hover {
+    .btn-update:hover {
         transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(79, 70, 229, 0.3);
+        box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3);
         color: white;
         text-decoration: none;
     }
@@ -349,7 +350,7 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .create-task-container {
+        .edit-task-container {
             padding: 1rem;
             align-items: flex-start;
         }

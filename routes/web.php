@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TasksController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,8 +21,13 @@ use App\Http\Controllers\TasksController;
 |
 */
 
+// Test route
+Route::get('/test', function () {
+    return "Basic test works!";
+});
+
 // Public routes (no login required)
-Route::get('/', [TasksController::class, 'index']); // Tasks as homepage
+Route::get('/', [HomeController::class, 'index'])->name('home'); // Homepage
 Route::resource('tasks', TasksController::class); // All task routes accessible without login
 
 // Example pages routes
@@ -55,8 +61,5 @@ Route::middleware('guest')->group(function () {
 
 // Protected routes (login required) - Only non-task routes here
 Route::middleware('auth')->group(function () {
-    Route::get('/home', function () {
-        return view('home');
-    })->name('home');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });

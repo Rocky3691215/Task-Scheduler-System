@@ -78,7 +78,7 @@
                                     @if($attachment->task_id)
                                         <span class="badge bg-primary">#{{ $attachment->task_id }}</span>
                                     @else
-                                        <span class="badge bg-light text-dark">N/A</span>
+                                        <span class="badge bg-light text-dark">1</span>
                                     @endif
                                 </td>
                                 <td>

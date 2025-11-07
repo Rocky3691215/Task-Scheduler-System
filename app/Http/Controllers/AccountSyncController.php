@@ -2,26 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\AccountSync;
+use App\Models\SyncHistory;
+use App\Models\UserAccount;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class AccountSyncController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * READ: Display a listing of the account syncs.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $accountSyncs = AccountSync::with('user')->latest()->paginate(10);
+        $user = Auth::user();
+        if ($user->email === 'admin@user.com') {
+            $accountSyncs = AccountSync::with('user')->latest()->paginate(10);
+        } else {
+            $accountSyncs = $user->accountSyncs()->latest()->paginate(10);
+        }
+
         return view('account_sync.index', compact('accountSyncs'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * CREATE: Show the form for creating a new account sync.
      *
      * @return \Illuminate\Http\Response
      */
@@ -31,53 +40,49 @@ class AccountSyncController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * CREATE: Store a newly created account sync in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'deviceId' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('account_sync')->where(function ($query) {
-                    return $query->where('userId', Auth::id());
-                })
-            ],
-            'lastSyncTime' => 'nullable|date',
-        ]);
+        public function store(Request $request)
+        {
+            try {
+                $deviceId = sha1($request->header('User-Agent'));
 
-        try {
-            $accountSync = AccountSync::create([
-                'deviceId' => $validated['deviceId'],
-                'lastSyncTime' => $validated['lastSyncTime'] ?? now(),
-                'userId' => Auth::id(),
-            ]);
+                AccountSync::create([
+                    'user_account_id' => Auth::user()->user_account_id,
+                    'deviceId' => $deviceId,
+                    'lastSyncTime' => now(),
+                ]);
 
-            return redirect()->route('account_sync.index')
-                ->with('success', 'Account sync created successfully!');
+                return redirect()->route('account_sync.index')
+                ->with('success', 'New account sync created successfully!');
         } catch (\Exception $e) {
-            return back()->withInput()
-                ->with('error', 'Failed to create account sync. Please try again.');
+            return back()->with('error', 'Failed to create new sync. Please try again.');
         }
     }
 
     /**
-     * Display the specified resource.
+     * READ: Display the specified account sync.
      *
      * @param  \App\Models\AccountSync  $accountSync
      * @return \Illuminate\Http\Response
      */
     public function show(AccountSync $accountSync)
-{
-    return view('account_sync.show', compact('accountSync'));
-}
+    {
+        $this->authorize('view', $accountSync);
+
+        // Eager load the history relationship with a constraint to ensure it's not empty
+        $accountSync->load(['history' => function ($query) {
+            $query->latest();
+        }]);
+
+        return view('account_sync.show', compact('accountSync'));
+    }
 
     /**
-     * Show the form for editing the specified resource.
+     * UPDATE: Show the form for editing the specified account sync.
      *
      * @param  \App\Models\AccountSync  $accountSync
      * @return \Illuminate\Http\Response
@@ -89,11 +94,11 @@ class AccountSyncController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * UPDATE: Update the specified account sync in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\AccountSync  $accountSync
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http_response
      */
     public function update(Request $request, AccountSync $accountSync)
     {
@@ -105,11 +110,12 @@ class AccountSyncController extends Controller
                 'string',
                 'max:255',
                 Rule::unique('account_sync')->where(function ($query) {
-                    return $query->where('userId', Auth::id());
-                })->ignore($accountSync->syncId)
+                    return $query->where('user_account_id', Auth::user()->user_account_id);
+                })->ignore($accountSync->syncId, 'syncId')
             ],
             'lastSyncTime' => 'nullable|date',
         ]);
+
 
         try {
             $accountSync->update([
@@ -126,7 +132,7 @@ class AccountSyncController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * DELETE: Remove the specified account sync from storage.
      *
      * @param  \App\Models\AccountSync  $accountSync
      * @return \Illuminate\Http\Response
@@ -152,14 +158,84 @@ class AccountSyncController extends Controller
      */
     public function syncNow(AccountSync $accountSync)
     {
-        $this->authorize('update', $accountSync);
+        $this->authorize('syncNow', $accountSync);
 
         try {
-            $accountSync->update(['lastSyncTime' => now()]);
+            // Simulate a sync process
+            $accountSync->lastSyncTime = now();
+            $accountSync->status = 'Success';
+            $accountSync->save();
 
-            return back()->with('success', 'Sync completed successfully!');
+            $accountSync->history()->create([
+                'status' => 'Success',
+                'message' => 'Manual sync initiated by user.',
+            ]);
+
+            return redirect()->route('account_sync.show', $accountSync)
+                ->with('success', 'Account synced successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to sync. Please try again.');
+            Log::error("Manual sync failed for Account ID {$accountSync->syncId}: " . $e->getMessage());
+
+            $accountSync->status = 'Failed';
+            $accountSync->save();
+
+            $accountSync->history()->create([
+                'status' => 'Failed',
+                'message' => 'Manual sync failed. See logs for details.',
+            ]);
+
+            return redirect()->route('account_sync.show', $accountSync)
+                ->with('error', 'Failed to sync account. Please try again.');
+        }
+    }
+
+    public function showSelectiveSyncForm()
+    {
+        $this->authorize('create', AccountSync::class);
+
+        // A regular user should only be able to select their own account.
+        // An admin can select from any user.
+        if (Auth::user()->email === 'admin@user.com') {
+            $users = UserAccount::all();
+        } else {
+            $users = UserAccount::where('user_account_id', Auth::user()->user_account_id)->get();
+        }
+
+        return view('account_sync.selective_sync', compact('users'));
+    }
+
+    /**
+     * Save the selective sync settings.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+        public function saveSelectiveSync(Request $request)
+        {
+            $this->authorize('create', AccountSync::class);
+
+            $request->validate([
+                'sync_options' => 'required|array|min:1',
+            ]);
+
+            try {
+                $deviceId = sha1($request->header('User-Agent') . $request->ip());
+                $accountSync = AccountSync::create([
+                    'user_account_id' => Auth::user()->user_account_id,
+                    'deviceId' => $deviceId,
+                    'lastSyncTime' => now(),
+                    'status' => 'Success',
+                ]);
+
+                $accountSync->history()->create([
+                'status' => 'Success',
+                'message' => 'Selective sync created: ' . implode(', ', $request->input('sync_options')),
+            ]);
+
+            return redirect()->route('account_sync.index')
+                ->with('success', 'Selective sync has been set up successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to set up selective sync. Please try again.');
         }
     }
 }

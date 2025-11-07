@@ -168,7 +168,6 @@
         main {
             flex: 1;
             padding-top: 70px;
-            min-height: calc(100vh - 70px);
         }
 
         .centered-main {
@@ -290,7 +289,7 @@
             </div>
 
             <div class="auth-section">
-                @if (Request::routeIs('account_sync.create'))
+                @if (Request::routeIs('account_sync.show'))
                     <a href="{{ route('account_sync.index') }}" class="btn-primary">Return</a>
                 @else
                     @auth

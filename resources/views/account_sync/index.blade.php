@@ -3,15 +3,23 @@
 @section('title', 'Account Sync Status')
 
 
-
+@if(Auth::user()->email === 'admin@user.com')
 @push('navbar-override')
 <style>
-    /* Hide Account Sync button on its own page */
-    a.nav-link[href="{{ url('/account_sync') }}"] {
-        display: none !important;
+    .auth-section a[href*="/home"],
+    .auth-section a[href*="/account_sync"]{
+                display: none !important;
+    }
+</style>
+@else
+@push('navbar-override')
+<style>
+    .auth-section a[href*="/account_sync"]{
+            display: none !important;
     }
 </style>
 @endpush
+@endif
 
 @push('styles')
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +35,7 @@ body {
 }
 
 main {
-    min-height: calc(100vh - 140px) !important;
+    padding-top: 70px;
 }
 
 .page-container {
@@ -230,11 +238,24 @@ tr:last-child td {
                     <h1 class="page-title">Account Sync Status</h1>
                     <p class="page-subtitle">Manage and monitor your account synchronization across devices</p>
                 </div>
-                <a href="/account_sync/create" class="add-button">Add New Sync</a>
+                <div style="display: flex; gap: 1rem;">
+                    @if (Auth::user()->email !== 'admin@user.com')
+                        @can('create', App\Models\AccountSync::class)
+                            <form id="sync-form" action="{{ route('account_sync.store') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            <a href="#" class="add-button" onclick="event.preventDefault(); if(confirm('Sync all data?')) { document.getElementById('sync-form').submit(); }">
+                                Auto Sync
+                            </a>
+                            <a href="{{ route('account_sync.show_selective_sync') }}" class="add-button">
+                                Selective Sync
+                            </a>
+                        @endcan
+                    @endif
+                </div>
             </div>
         </div>
 
-        <!-- Content Card -->
         <div class="content-card">
             <div class="table-container">
                 <table>
@@ -243,15 +264,18 @@ tr:last-child td {
                             <th>Sync ID</th>
                             <th>Last Sync Time</th>
                             <th>Device ID</th>
-                            <th>User ID</th>
+                            @if(Auth::check() && Auth::user()->email === 'admin@user.com')
+                                <th>User ID</th>
+                            @endif
                             <th>Created At</th>
                             <th>Updated At</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($accountSyncs as $sync)
                             <tr>
-                                <td><a href="/account_sync/{{ $sync->syncId }}"><strong>{{ $sync->syncId }}</strong></a></td>
+                                <td><a href="{{ route('account_sync.show', $sync->syncId) }}" style="text-decoration: none; color: inherit;"><strong>{{ $sync->syncId }}</strong></a></td>
                                 <td>
                                     @if($sync->lastSyncTime)
                                         <span style="color: #059669;">{{ \Carbon\Carbon::parse($sync->lastSyncTime)->format('M j, Y g:i A') }}</span>
@@ -260,13 +284,23 @@ tr:last-child td {
                                     @endif
                                 </td>
                                 <td><code style="background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">{{ $sync->deviceId }}</code></td>
-                                <td><strong>{{ $sync->userId }}</strong></td>
+                                @if(Auth::check() && Auth::user()->email === 'admin@user.com')
+                                    <td><strong>{{ $sync->user_account_id }}</strong></td>
+                                @endif
                                 <td>{{ $sync->created_at->format('M j, Y g:i A') }}</td>
                                 <td>{{ $sync->updated_at->format('M j, Y g:i A') }}</td>
+                                <td>
+                                    <a href="{{ route('account_sync.edit', $sync->syncId) }}" class="action-link">Edit</a>
+                                    <form action="{{ route('account_sync.destroy', $sync->syncId) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="action-link" style="border: none; background: none; cursor: pointer; color: #dc2626;" onclick="return confirm('Are you sure you want to delete this sync record?')">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6">
+                                <td colspan="{{ (Auth::check() && Auth::user()->email === 'admin@user.com') ? '7' : '6' }}">
                                     <div class="empty-state">
                                         <div class="empty-state-icon">📱</div>
                                         <div class="empty-state-text">No account sync records found</div>

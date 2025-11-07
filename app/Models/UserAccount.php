@@ -8,9 +8,22 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class UserAccount extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected $table = 'user_accounts';
+    protected $primaryKey = 'user_account_id';
+
+    /**
+     * Get the name of the unique identifier for the user.
+     *
+     * @return string
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'user_account_id';
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -44,4 +57,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the account syncs for the user account.
+     */
+    public function accountSyncs()
+    {
+        return $this->hasMany(AccountSync::class, 'user_account_id');
+    }
 }

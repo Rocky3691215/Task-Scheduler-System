@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\AccountSync;
-use App\Models\User;
+use App\Models\UserAccount;
 use Illuminate\Auth\Access\Response;
 
 class AccountSyncPolicy
@@ -11,56 +11,66 @@ class AccountSyncPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(UserAccount $userAccount): bool
     {
-        return true; // Authenticated users can view their own syncs
+        return true;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, AccountSync $accountSync): bool
+    public function view(UserAccount $userAccount, AccountSync $accountSync): bool
     {
-        return $user->id === $accountSync->userId;
+        return $userAccount->email === 'admin@user.com' || $userAccount->user_account_id === $accountSync->user_account_id;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(UserAccount $userAccount): bool
     {
-        return true; // Authenticated users can create syncs
+        // Any authenticated user can create a sync record.
+        // The controller will handle associating it with the correct user.
+        return true;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, AccountSync $accountSync): bool
+    public function update(UserAccount $userAccount, AccountSync $accountSync): bool
     {
-        return $user->id === $accountSync->userId;
+        return $userAccount->email === 'admin@user.com' || $userAccount->user_account_id === $accountSync->user_account_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, AccountSync $accountSync): bool
+    public function delete(UserAccount $userAccount, AccountSync $accountSync): bool
     {
-        return $user->id === $accountSync->userId;
+        return $userAccount->email === 'admin@user.com' || $userAccount->user_account_id === $accountSync->user_account_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, AccountSync $accountSync): bool
+    public function restore(UserAccount $userAccount, AccountSync $accountSync): bool
     {
-        return $user->id === $accountSync->userId;
+        return $userAccount->email === 'admin@user.com';
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, AccountSync $accountSync): bool
+    public function forceDelete(UserAccount $userAccount, AccountSync $accountSync): bool
     {
-        return $user->id === $accountSync->userId;
+        return $userAccount->email === 'admin@user.com';
+    }
+
+    /**
+     * Determine whether the user can trigger a sync.
+     */
+    public function syncNow(UserAccount $userAccount, AccountSync $accountSync): bool
+    {
+        return $userAccount->email === 'admin@user.com' || $userAccount->user_account_id === $accountSync->user_account_id;
     }
 }

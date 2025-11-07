@@ -11,7 +11,7 @@
                     <h1 class="page-title">Task Dashboard</h1>
                     <p class="page-subtitle">Manage your tasks efficiently and stay organized</p>
                 </div>
-                <a href="#" class="add-button" onclick="showSection('add-task')">Add New Task</a>
+                <a href="#" class="add-button" onclick="showSection('add-task')">Add Task</a>
             </div>
         </div>
 
@@ -41,7 +41,7 @@
 
         <!-- Add/Edit Task Section -->
         <div id="add-task" class="content-card" style="display:none; margin-top: 2rem;">
-            <h2 class="card-title">Add/Edit Task</h2>
+            <h2 class="card-title">Add Task</h2>
             <form>
                 <div class="form-group">
                     <label for="task-title">Title</label>
@@ -63,7 +63,10 @@
                     <label for="reminder-time">Reminder Time</label>
                     <input type="datetime-local" id="reminder-time" name="reminder_time" class="form-input">
                 </div>
-                <button type="submit" class="btn-primary">Save Task</button>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn-primary" style="flex: 1;">Save Task</button>
+                    <button type="button" class="btn-primary" style="flex: 1; background: #64748b;" onclick="showSection('dashboard')">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
@@ -337,17 +340,21 @@
             document.querySelectorAll('.content-card').forEach(card => {
                 if (card.id === sectionId) {
                     card.style.display = 'block';
-                } else if (card.classList.contains('dashboard')) {
-                    card.style.display = sectionId === 'dashboard' ? 'block' : 'none';
                 } else {
-                    card.style.display = 'none';
+                    // Special handling for the main dashboard card
+                    if (card.querySelector('.dashboard')) {
+                        card.style.display = sectionId.startsWith('dashboard') ? 'block' : 'none';
+                    } else {
+                        card.style.display = 'none';
+                    }
                 }
             });
 
+            const addButton = document.querySelector('.page-header .add-button');
             if (sectionId === 'add-task') {
-                document.querySelector('.page-header .add-button').style.display = 'none';
+                addButton.style.display = 'none';
             } else {
-                document.querySelector('.page-header .add-button').style.display = 'inline-flex';
+                addButton.style.display = 'inline-flex';
             }
         }
 

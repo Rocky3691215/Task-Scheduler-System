@@ -2,63 +2,89 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Display a list of admins
     public function index()
     {
-        //
+        $admins = Admin::all(); // This line should exist
+        return view('admin.index', compact('admins')); // This passes $admins to the view
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Show form to create a new admin
     public function create()
     {
-        //
+        return view('admin.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Store a new admin
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:admins,email',
+            'password' => 'required|string|min:6',
+        ]);
+
+        Admin::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('admin.index')
+                         ->with('success', 'Admin created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Show a single admin
+    public function show($id)
     {
-        //
+        $admin = Admin::findOrFail($id);
+        return view('admin.show', compact('admin'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // Show form to edit an admin
+    public function edit($id)
     {
-        //
+        $admin = Admin::findOrFail($id);
+        return view('admin.edit', compact('admin'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Update an existing admin
+    public function update(Request $request, $id)
     {
-        //
+        $admin = Admin::findOrFail($id);
+
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:admins,email,' . $admin->id,
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $admin->name  = $request->name;
+        $admin->email = $request->email;
+
+        if ($request->password) {
+            $admin->password = Hash::make($request->password);
+        }
+
+        $admin->save();
+
+        return redirect()->route('admin.index')
+                         ->with('success', 'Admin updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    // Delete an admin
+    public function destroy($id)
     {
-        //
+        $admin = Admin::findOrFail($id);
+        $admin->delete();
+
+        return redirect()->route('admin.index')
+                         ->with('success', 'Admin deleted successfully.');
     }
 }

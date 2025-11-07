@@ -113,6 +113,14 @@
             background-color: #ef4444;
             color: white;
         }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            color: #6b7280;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -141,40 +149,45 @@
             </div>
         @endif
 
-        <div class="table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                   @isset($admins)
-    @foreach($admins as $admin)
-     
+        @if(isset($admins) && $admins->count() > 0)
+            <div class="table">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ $admin->id }}</td>
-                            <td>
-                                <a href="/admin/{{ $admin->id }}" style="color: #4f46e5; text-decoration: none;">{{ $admin->name }}</a>
-                            </td>
-                            <td>{{ $admin->email }}</td>
-                            <td class="actions">
-                                <a href="{{ route('admin.edit', $admin->id) }}">Edit</a>
-                                <form action="{{ route('admin.destroy', $admin->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
-                                </form>
-                            </td>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Actions</th>
                         </tr>
-                    @endforeach
-                    @endisset
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @foreach($admins as $admin)
+                            <tr>
+                                <td>{{ $admin->id }}</td>
+                                <td>
+                                    <a href="{{ route('admin.show', $admin->id) }}" style="color: #4f46e5; text-decoration: none;">{{ $admin->name }}</a>
+                                </td>
+                                <td>{{ $admin->email }}</td>
+                                <td class="actions">
+                                    <a href="{{ route('admin.edit', $admin->id) }}">Edit</a>
+                                    <form action="{{ route('admin.destroy', $admin->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="empty-state">
+                <h3>No Admins Found</h3>
+                <p>Get started by creating your first admin.</p>
+                <a href="{{ route('admin.create') }}" class="add">Add First Admin</a>
+            </div>
+        @endif
     </main>
 
     <footer>

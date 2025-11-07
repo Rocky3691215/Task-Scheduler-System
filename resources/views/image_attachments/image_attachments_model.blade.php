@@ -26,18 +26,18 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="color:black;">{{ $attachment['id'] }}</td>
-                        <td style="color:black;">{{ $attachment['file_name'] }}</td>
-                        <td><a href="{{ $attachment['file_path'] }}" style="color:black; text-decoration:none;">View File</a></td>
+                        <td style="color:black;">{{ $attachment->id }}</td>
+                        <td style="color:black;">{{ $attachment->file_name }}</td>
+                        <td><a href="{{ $attachment->file_path }}" style="color:black; text-decoration:none;" target="_blank">View File</a></td>
                         <td style="color:black;">
-                            @if($attachment['file_size'] >= 1048576)
-                                {{ number_format($attachment['file_size'] / 1048576, 2) }} MB
+                            @if($attachment->file_size >= 1048576)
+                                {{ number_format($attachment->file_size / 1048576, 2) }} MB
                             @else
-                                {{ number_format($attachment['file_size'] / 1024, 2) }} KB
+                                {{ number_format($attachment->file_size / 1024, 2) }} KB
                             @endif
                         </td>
-                        <td style="color:black;">{{ \Carbon\Carbon::parse($attachment['upload_date'])->format('M d, Y') }}</td>
-                        <td style="color:black;">{{ $attachment['task_id'] }}</td>
+                        <td style="color:black;">{{ $attachment->upload_date ? \Carbon\Carbon::parse($attachment->upload_date)->format('M d, Y') : 'N/A' }}</td>
+                        <td style="color:black;">{{ $attachment->task_id ?? 'N/A' }}</td>
                     </tr>
                 </tbody>
             </table>

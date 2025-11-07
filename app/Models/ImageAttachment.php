@@ -1,5 +1,5 @@
 <?php
-
+// ImageAttachment.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,7 +9,8 @@ class ImageAttachment extends Model
 {
     use HasFactory;
 
-    protected $table = 'image_attachments'; // matches your table name
+    protected $table = 'image_attachments';
+    
     protected $fillable = [
         'file_name',
         'file_path',
@@ -17,4 +18,17 @@ class ImageAttachment extends Model
         'upload_date',
         'task_id',
     ];
+
+    protected $casts = [
+        'upload_date' => 'date',
+        'file_size' => 'integer',
+    ];
+
+    /**
+     * Get the task that owns the image attachment.
+     */
+    public function task()
+    {
+        return $this->belongsTo(Task::class);
+    }
 }

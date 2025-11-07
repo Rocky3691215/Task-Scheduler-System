@@ -1,5 +1,5 @@
 <?php
-
+// web.php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\SignUpsController;
@@ -9,54 +9,40 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImageAttachmentController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
+// Public routes
 Route::get('/', function () {
     return view('landing');
 });
-//return a string 
+
 Route::get('/page1', function () {
     return 'Hello World';
 });
-//return a variable
+
 Route::get('/page2', function () {
     $message = 'Hello Again';
     return $message;
 });
-//return an array
+
 Route::get('/page3', function () {
     $arr = [1,2,3];
     return $arr;
 });
-//return a view
+
 Route::get('/page4', [PagesController::class, 'page4']);
-
-//return a view inside a folder
 Route::get('/page5', [PagesController::class, 'page5']);
-
-//Pass data from view to controller and vice versa
 Route::get('/sign-up', [SignUpsController::class, 'index']);
-
-//Foreach Loops in blade
 Route::get('/quotes', [QuotesController::class, 'index']);
-
-//how to take care of a route that keeps changing
-//use wildcards {}- for parts of route that isn't static
-
 Route::get('/quotes/author/{author}', [QuotesController::class, 'filterByAuthor']);
-
-//create your route for products
 Route::get('/products', [ProductsController::class, 'index']);
 
+// Authentication routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
@@ -69,18 +55,19 @@ Route::middleware('auth')->group(function (){
         return view('home');
     })->name('home');
 });
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    // create your route for image attachments
-// Route::get('/image_attachments', ImageController'@index');
- 
-// Route::get('/image_attachments/{id}',ImageAttachmentsController'@show');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Public routes (accessible without login)
-Route::get('/image_attachments/{id}', [ImageAttachmentController::class, 'show'])->name('image_attachments.show');
+// Image Attachments Routes - ALL PUBLIC (No login required)
 Route::get('/image_attachments', [ImageAttachmentController::class, 'index'])->name('image_attachments.index');
+Route::get('/image_attachments/create', [ImageAttachmentController::class, 'create'])->name('image_attachments.create');
+Route::post('/image_attachments', [ImageAttachmentController::class, 'store'])->name('image_attachments.store');
+Route::get('/image_attachments/{id}', [ImageAttachmentController::class, 'show'])->name('image_attachments.show');
+Route::get('/image_attachments/{id}/edit', [ImageAttachmentController::class, 'edit'])->name('image_attachments.edit');
+Route::put('/image_attachments/{id}', [ImageAttachmentController::class, 'update'])->name('image_attachments.update');
+Route::delete('/image_attachments/{id}', [ImageAttachmentController::class, 'destroy'])->name('image_attachments.destroy');
 
-// Protected routes (require authentication)
-Route::middleware(['auth'])->group(function () {
-    Route::resource('image_attachments', ImageAttachmentController::class)->except(['index', 'show']);
-});
+// Remove the protected routes group since all image attachment routes are now public
+// Route::middleware(['auth'])->group(function () {
+//     // This group is now empty or removed
+// });

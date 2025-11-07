@@ -1,5 +1,5 @@
 <?php
-
+// 2025_10_13_074321_create_image_attachments_table.php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,8 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('file_size')->nullable(); // optional: file size in bytes
             $table->date('upload_date')->nullable(); // upload date
             $table->unsignedBigInteger('task_id')->nullable(); // foreign key to tasks table
-            $table->foreign('task_id')->references('id')->on('tasks');
-            $table->morphs('attachable'); // for polymorphic relation (can attach to any model)
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,4 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('image_attachments');
     }
 };
-

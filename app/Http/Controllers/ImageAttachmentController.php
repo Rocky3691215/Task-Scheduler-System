@@ -10,78 +10,83 @@ class ImageAttachmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-public function index()
-{
-    $image_attachments = \App\Models\ImageAttachment::all();
-    return view('image_attachments.index', compact('image_attachments'));
-}
-
-
+    public function index()
+    {
+        $image_attachments = ImageAttachment::all();
+        return view('image_attachments.index', compact('image_attachments'));
+    }
 
     /**
-     * Display a specific image attachment.
+     * Show the form for creating a new resource.
      */
-public function show($id)
-{
+    public function create()
+    {
+        return view('image_attachments.create');
+    }
 
-  $attachments = [
-        1 => [
-            'id' => 1,
-            'file_name' => 'sample_image.png',
-            'file_path' => '#',
-            'file_size' => 204800,
-            'upload_date' => '2025-10-28',
-            'task_id' => 11,
-        ],
-        2 => [
-            'id' => 2,
-            'file_name' => 'project_logo.jpg',
-            'file_path' => '#',
-            'file_size' => 358400,
-            'upload_date' => '2025-10-30',
-            'task_id' => 12,
-        ],
-        3 => [
-            'id' => 3,
-            'file_name' => 'invoice_receipt.pdf',
-            'file_path' => '#',
-            'file_size' => 1258291,
-            'upload_date' => '2025-11-01',
-            'task_id' => 8,
-        ],
-        4 => [
-            'id' => 4,
-            'file_name' => 'meeting_notes.docx',
-            'file_path' => '#',
-            'file_size' => 512000,
-            'upload_date' => '2025-11-02',
-            'task_id' => 5,
-        ],
-        5 => [
-            'id' => 5,
-            'file_name' => 'task_overview.xlsx',
-            'file_path' => '#',
-            'file_size' => 256000,
-            'upload_date' => '2025-11-03',
-            'task_id' => 7,
-        ],
-        6 => [
-            'id' => 6,
-            'file_name' => 'bug_report.txt',
-            'file_path' => '#',
-            'file_size' => 102400,
-            'upload_date' => '2025-11-05',
-            'task_id' => 10,
-        ]
-    ];
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'file_name' => 'required|string|max:255',
+            'file_path' => 'required|string|max:255',
+            'file_size' => 'nullable|integer|min:0',
+            'upload_date' => 'nullable|date',
+            'task_id' => 'nullable|integer|exists:tasks,id',
+        ]);
 
-    
-      $attachment = $attachments[$id] ?? null;
+        ImageAttachment::create($request->all());
 
-    return view('image_attachments.image_attachments_model', compact('attachment'));
-}
+        return redirect()->route('image_attachments.index')->with('success', 'Image attachment created successfully.');
+    }
 
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $attachment = ImageAttachment::findOrFail($id);
+        return view('image_attachments.image_attachments_model', compact('attachment'));
+    }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $image_attachment = ImageAttachment::findOrFail($id);
+        return view('image_attachments.edit', compact('image_attachment'));
+    }
 
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'file_name' => 'required|string|max:255',
+            'file_path' => 'required|string|max:255',
+            'file_size' => 'nullable|integer|min:0',
+            'upload_date' => 'nullable|date',
+            'task_id' => 'nullable|integer|exists:tasks,id',
+        ]);
 
+        $image_attachment = ImageAttachment::findOrFail($id);
+        $image_attachment->update($request->all());
+
+        return redirect()->route('image_attachments.index')->with('success', 'Image attachment updated successfully.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        $image_attachment = ImageAttachment::findOrFail($id);
+        $image_attachment->delete();
+
+        return redirect()->route('image_attachments.index')->with('success', 'Image attachment deleted successfully.');
+    }
 }

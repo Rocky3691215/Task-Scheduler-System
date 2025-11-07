@@ -4,11 +4,17 @@
 
 @section('content')
 
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
 <div class="container mt-8">
 
     <div class="mb-8">
-        <a href="{{ route('image_attachments.create') }}" class="btn btn-secondary"> Image Files </a>
+        <a href="{{ route('image_attachments.create') }}" class="btn btn-secondary"> Image File </a>
     </div>
 
     <div class="table-responsive shadow-sm rounded">
@@ -21,57 +27,33 @@
                     <th>File Size</th>
                     <th>Upload Date</th>
                     <th>Task ID</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                @forelse($image_attachments as $attachment)
                 <tr>
-                    <td style="color:black;">1</td>
-                    <td style="color:black;">sample_image.png</td>
-                    <td><a href="#" style="color:black; text-decoration:none;"> File</a></td>
-                    <td style="color:black;">200.00 KB</td>
-                    <td style="color:black;">Oct 28, 2025</td>
-                    <td style="color:black;">11</td>
+                    <td style="color:black;">{{ $attachment->id }}</td>
+                    <td style="color:black;">{{ $attachment->file_name }}</td>
+                    <td><a href="{{ $attachment->file_path }}" style="color:black; text-decoration:none;" target="_blank">File</a></td>
+                    <td style="color:black;">{{ number_format($attachment->file_size / 1024, 2) }} KB</td>
+                    <td style="color:black;">{{ $attachment->upload_date ? \Carbon\Carbon::parse($attachment->upload_date)->format('M d, Y') : 'N/A' }}</td>
+                    <td style="color:black;">{{ $attachment->task_id ?? 'N/A' }}</td>
+                    <td>
+                        <a href="{{ route('image_attachments.show', $attachment->id) }}" class="btn btn-sm btn-info">View</a>
+                        <a href="{{ route('image_attachments.edit', $attachment->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <form action="{{ route('image_attachments.destroy', $attachment->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this attachment?')">Delete</button>
+                        </form>
+                    </td>
                 </tr>
+                @empty
                 <tr>
-                    <td style="color:black;">2</td>
-                    <td style="color:black;">project_logo.jpg</td>
-                    <td><a href="#" style="color:black; text-decoration:none;">File</a></td>
-                    <td style="color:black;">350.00 KB</td>
-                    <td style="color:black;">Oct 30, 2025</td>
-                    <td style="color:black;">12</td>
+                    <td colspan="7" class="text-center">No image attachments found.</td>
                 </tr>
-                <tr>
-                    <td style="color:black;">3</td>
-                    <td style="color:black;">invoice_receipt.pdf</td>
-                    <td><a href="#" style="color:black; text-decoration:none;"> File</a></td>
-                    <td style="color:black;">1.20 MB</td>
-                    <td style="color:black;">Nov 01, 2025</td>
-                    <td style="color:black;">8</td>
-                </tr>
-                <tr>
-                    <td style="color:black;">4</td>
-                    <td style="color:black;">meeting_notes.docx</td>
-                    <td><a href="#" style="color:black; text-decoration:none;">File</a></td>
-                    <td style="color:black;">500.00 KB</td>
-                    <td style="color:black;">Nov 02, 2025</td>
-                    <td style="color:black;">5</td>
-                </tr>
-                <tr>
-                    <td style="color:black;">5</td>
-                    <td style="color:black;">task_overview.xlsx</td>
-                    <td><a href="#" style="color:black; text-decoration:none;">File</a></td>
-                    <td style="color:black;">250.00 KB</td>
-                    <td style="color:black;">Nov 03, 2025</td>
-                    <td style="color:black;">7</td>
-                </tr>
-                <tr>
-                    <td style="color:black;">6</td>
-                    <td style="color:black;">bug_report.txt</td>
-                    <td><a href="#" style="color:black; text-decoration:none;">File</a></td>
-                    <td style="color:black;">100.00 KB</td>
-                    <td style="color:black;">Nov 05, 2025</td>
-                    <td style="color:black;">10</td>
-                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

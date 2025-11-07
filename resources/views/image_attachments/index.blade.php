@@ -3,77 +3,86 @@
 @section('title', 'Trackpay - Image Attachments')
 
 @section('content')
-<div class="container mt-4">
 
-    <div class="mb-3">
-        <a href="{{ route('image_attachments.create') }}" class="btn btn-secondary">Add New Image</a>
+
+<div class="container mt-8">
+
+    <div class="mb-8">
+        <a href="{{ route('image_attachments.create') }}" class="btn btn-secondary"> Image Files </a>
     </div>
 
-    @if($image_attachments->count() > 0)
-        <div class="table-responsive shadow-sm rounded">
-            <table class="table table-bordered table-striped text-center align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>File Name</th>
-                        <th>File Path</th>
-                        <th>File Size</th>
-                        <th>Upload Date</th>
-                        <th>Task ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($image_attachments as $attachment)
-                        <tr>
-                            <td style="color:black;">
-                                <a href="{{ route('image_attachments.show', $attachment->id) }}" style="color:black; text-decoration:none;">
-                                    {{ $attachment->id }}
-                                </a>
-                            </td>
-                            <td style="color:black;">{{ $attachment->file_name }}</td>
-                            <td>
-                                @if($attachment->file_path)
-                                    <a href="{{ asset($attachment->file_path) }}" target="_blank" style="color:black; text-decoration:none;">
-                                        View File
-                                    </a>
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                            <td style="color:black;">
-                                @if($attachment->file_size)
-                                    @if($attachment->file_size >= 1048576)
-                                        {{ number_format($attachment->file_size / 1048576, 2) }} MB
-                                    @else
-                                        {{ number_format($attachment->file_size / 1024, 2) }} KB
-                                    @endif
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                            <td style="color:black;">
-                                {{ $attachment->upload_date ? \Carbon\Carbon::parse($attachment->upload_date)->format('M d, Y') : 'N/A' }}
-                            </td>
-                            <td style="color:black;">{{ $attachment->task_id ?? 'N/A' }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @else
-        <div class="alert alert-warning text-center">No image attachments found.</div>
-    @endif
-
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>File Name</th>
+                    <th>File Path</th>
+                    <th>File Size</th>
+                    <th>Upload Date</th>
+                    <th>Task ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="color:black;">1</td>
+                    <td style="color:black;">sample_image.png</td>
+                    <td><a href="#" style="color:black; text-decoration:none;"> File</a></td>
+                    <td style="color:black;">200.00 KB</td>
+                    <td style="color:black;">Oct 28, 2025</td>
+                    <td style="color:black;">11</td>
+                </tr>
+                <tr>
+                    <td style="color:black;">2</td>
+                    <td style="color:black;">project_logo.jpg</td>
+                    <td><a href="#" style="color:black; text-decoration:none;">File</a></td>
+                    <td style="color:black;">350.00 KB</td>
+                    <td style="color:black;">Oct 30, 2025</td>
+                    <td style="color:black;">12</td>
+                </tr>
+                <tr>
+                    <td style="color:black;">3</td>
+                    <td style="color:black;">invoice_receipt.pdf</td>
+                    <td><a href="#" style="color:black; text-decoration:none;"> File</a></td>
+                    <td style="color:black;">1.20 MB</td>
+                    <td style="color:black;">Nov 01, 2025</td>
+                    <td style="color:black;">8</td>
+                </tr>
+                <tr>
+                    <td style="color:black;">4</td>
+                    <td style="color:black;">meeting_notes.docx</td>
+                    <td><a href="#" style="color:black; text-decoration:none;">File</a></td>
+                    <td style="color:black;">500.00 KB</td>
+                    <td style="color:black;">Nov 02, 2025</td>
+                    <td style="color:black;">5</td>
+                </tr>
+                <tr>
+                    <td style="color:black;">5</td>
+                    <td style="color:black;">task_overview.xlsx</td>
+                    <td><a href="#" style="color:black; text-decoration:none;">File</a></td>
+                    <td style="color:black;">250.00 KB</td>
+                    <td style="color:black;">Nov 03, 2025</td>
+                    <td style="color:black;">7</td>
+                </tr>
+                <tr>
+                    <td style="color:black;">6</td>
+                    <td style="color:black;">bug_report.txt</td>
+                    <td><a href="#" style="color:black; text-decoration:none;">File</a></td>
+                    <td style="color:black;">100.00 KB</td>
+                    <td style="color:black;">Nov 05, 2025</td>
+                    <td style="color:black;">10</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection
 
-
 @push('styles')
 <style>
-    h2.text-primary {
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        
+    /* Spacing from the navigation bar */
+    .container {
+        margin-top: 80px !important;
     }
 
     .btn-secondary {
@@ -88,9 +97,11 @@
         color: #000;
     }
 
-    table th, table td {
+    table th,
+    table td {
         padding: 12px 16px;
         vertical-align: middle !important;
+        color: black;
     }
 
     table th {

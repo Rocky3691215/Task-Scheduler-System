@@ -60,7 +60,6 @@
     @stack('styles')
 </head>
 <body>
-    @if (Request::is('/') || Request::is('home'))
     <header>
         <h1>Task Scheduler</h1>
         <nav>
@@ -76,9 +75,8 @@
             @endguest
         </nav>
     </header>
-    @endif
 
-    <main>
+    <main class="content">
         @yield('content')
     </main>
 

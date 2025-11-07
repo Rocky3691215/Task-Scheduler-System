@@ -48,7 +48,6 @@
 
 </div>
 @endsection
-
 @push('styles')
 <style>
     /* Spacing from the navigation bar */
@@ -96,4 +95,3 @@
     }
 </style>
 @endpush
-

@@ -8,5 +8,5 @@
 - [x] Create resources/views/image_attachments/edit.blade.php: A form view for editing existing image attachments, pre-populated with current data.
 - [x] Implement missing CRUD methods in ImageAttachmentController.php: create, store, edit, update, destroy.
 - [x] Add validation to store and update methods.
-- [ ] Test CRUD operations.
-- [ ] Commit changes to new branch 'CRUD_for_image_attachments' and push to GitHub.
+- [x] Test CRUD operations.
+- [x] Commit changes to new branch 'CRUD_for_image_attachments' and push to GitHub.
